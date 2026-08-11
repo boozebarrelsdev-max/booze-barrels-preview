@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./assets/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BOOZE & BARRELS — DESIGN TOKENS
+   Identical block to the landing page. Single source of truth:
+   change a value here and it changes the whole page.
+   ============================================================ */
+:root{
+  /* --- colour ------------------------------------------------ */
+  --ink:#1E1B16;        /* Ironbark  — all type, rules, primary button */
+  --eucalypt:#3B3A2E;   /* Eucalypt  — RESERVED: engraved surfaces only */
+  --steel:#9A9386;      /* Steel     — meta text, captions, image fields */
+  --mineral:#E6E2D9;    /* Mineral   — page ground (unengraved material) */
+  --chalk:#F5F2EC;      /* Chalk     — raised panels */
+  --cask:#16130E;       /* Cask      — video wall band only */
+
+  --ph-a:color-mix(in oklab, var(--steel) 88%, var(--chalk));
+  --ph-b:color-mix(in oklab, var(--steel) 72%, var(--cask));
+  --ph-c:color-mix(in oklab, var(--steel) 58%, var(--chalk));
+
+  --wall-bg:var(--cask);
+  --wall-ink:var(--chalk);
+
+  /* --- type -------------------------------------------------- */
+  --ff-display:"Archivo","Helvetica Neue",Helvetica,sans-serif;
+  --ff-text:"Newsreader",Georgia,serif;
+  --fs-display-xl:clamp(2.1rem,8.4vw,4.9rem);
+  --fs-display-l:clamp(1.85rem,5.2vw,3.4rem);
+  --fs-display-m:clamp(1.5rem,3.4vw,2.2rem);
+  --fs-display-s:clamp(1.15rem,2.2vw,1.45rem);
+  --fs-lead:clamp(1.02rem,1.4vw,1.16rem);
+  --fs-body:1rem;
+  --fs-small:0.875rem;
+  --fs-micro:0.75rem;
+  --fs-eyebrow:0.7rem;
+  --fs-plate:clamp(1.25rem,3vw,2rem);
+  --lh-tight:1.03;
+  --lh-body:1.6;
+  --ls-eyebrow:0.2em;
+  --ls-display:-0.02em;
+
+  /* --- space ------------------------------------------------- */
+  --sp-3xs:4px; --sp-2xs:8px; --sp-xs:12px; --sp-s:16px;
+  --sp-m:24px;  --sp-l:36px;  --sp-xl:56px; --sp-2xl:80px;
+  --sp-section:clamp(56px,9vw,120px);
+  --gutter:clamp(20px,5vw,64px);
+  --maxw:1280px;
+  --col-min:min(100%,420px);
+
+  /* --- lines & shapes ---------------------------------------- */
+  --rule:1px solid color-mix(in oklab, var(--ink) 16%, transparent);
+  --rule-strong:1px solid var(--ink);
+  --rule-cut:1px solid var(--eucalypt);
+  --radius:5px;          /* set by the Finish tweak */
+  --accent-ui:var(--eucalypt);/* set by the Accent use tweak */
+  --sheen:linear-gradient(176deg,color-mix(in oklab,var(--chalk) 26%,transparent) 0%,transparent 38%);
+  --elev:0 12px 28px -22px color-mix(in oklab,var(--cask) 55%,transparent);
+  --focus:2px solid var(--eucalypt);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--mineral);color:var(--ink);font-family:var(--ff-text);font-size:var(--fs-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+img,video,svg{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-color:color-mix(in oklab,var(--ink) 35%,transparent)}
+a:hover{color:var(--accent-ui);text-decoration-color:var(--accent-ui)}
+:focus-visible{outline:var(--focus);outline-offset:3px}
+summary::-webkit-details-marker{display:none}
+::selection{background:var(--eucalypt);color:var(--chalk)}
+@media (max-width:760px){
+  [aria-label="Product images"]{display:none!important}
+  [data-pdp-gallery]{flex:1 1 100%!important;min-width:0}
+}
+@media (max-width:900px){
+  [data-pdp-gallery]{position:static!important;top:auto!important}
+}
+@media (max-width:560px){
+  [data-pdp-offers]{grid-template-columns:1fr!important;gap:var(--sp-s)!important}
+}
+html,body{max-width:100%;overflow-x:hidden}
+nav[aria-label="Primary"]{scrollbar-width:none;-ms-overflow-style:none}
+nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
+@keyframes bbRise{from{opacity:0;transform:translate3d(0,56px,0) scale(.985)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</helmet>
+
+<div style="min-height:100%;background:var(--mineral)">
+
+<a href="#main" style="position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--chalk);padding:var(--sp-xs) var(--sp-s);z-index:99" style-focus="left:0">Skip to content</a>
+
+<header data-screen-label="Header" style="border-bottom:var(--rule);background:var(--mineral);position:sticky;top:0;z-index:40">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-s) var(--gutter);display:flex;align-items:center;gap:var(--sp-m)">
+    <a href="index.html" style="text-decoration:none;flex:0 0 auto;display:block;line-height:1">
+      <span style="display:block;font-family:var(--ff-display);font-weight:700;font-size:var(--fs-display-s);letter-spacing:var(--ls-display)">Booze &amp; Barrels</span>
+      <span style="display:block;font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);margin-top:var(--sp-3xs)">Engravers · Canberra</span>
+    </a>
+    <nav aria-label="Primary" style="flex:1 1 auto;min-width:0;overflow-x:auto;display:flex;justify-content:flex-end">
+      <ul style="list-style:none;margin:0;padding:0;display:flex;gap:clamp(14px,2.2vw,32px);white-space:nowrap;align-items:center">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
+          <li><a href="{{ item.href }}" style="font-family:var(--ff-display);font-size:var(--fs-small);text-decoration:none" style-hover="text-decoration:underline">{{ item.label }}</a></li>
+        </sc-for>
+      </ul>
+    </nav>
+    <a href="product-detail.html" style="flex:0 0 auto;font-family:var(--ff-display);font-size:var(--fs-small);text-decoration:none;border-left:var(--rule);padding-left:var(--sp-m)">Bag</a>
+  </div>
+</header>
+
+<main id="main">
+
+<section data-screen-label="Product" style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-m) var(--gutter) var(--sp-section)">
+  <div style="display:flex;flex-wrap:wrap;gap:var(--sp-xl) var(--sp-xl);align-items:flex-start">
+
+    <!-- ---------------------- LEFT: GALLERY ---------------------- -->
+    <div data-pdp-gallery="true" style="flex:3 1 min(100%,600px);display:flex;gap:var(--sp-s);position:sticky;top:var(--sp-2xl)">
+      <ul aria-label="Product images" style="list-style:none;margin:0;padding:0;display:grid;align-content:start;align-self:start;gap:var(--sp-2xs);flex:0 0 clamp(68px,7vw,92px)">
+        <sc-for list="{{ thumbs }}" as="thumb" hint-placeholder-count="5">
+          <li>
+            <button type="button" onClick="{{ thumb.onSelect }}" aria-label="{{ thumb.aria }}" aria-current="{{ thumb.current }}" style="{{ thumb.style }}"></button>
+          </li>
+        </sc-for>
+      </ul>
+
+      <figure style="margin:0;flex:1 1 auto;min-width:0">
+        <!-- MAIN PRODUCT PHOTOGRAPH — see gallery[].shot in logic for each frame's brief -->
+        <div style="position:relative;aspect-ratio:1/1;background:color-mix(in oklab,var(--chalk) 58%,var(--mineral));box-shadow:var(--elev);border-radius:var(--radius);overflow:hidden">
+          <div role="img" aria-label="{{ activeShot }}" style="{{ activeImgStyle }}"></div>
+          <div style="position:absolute;right:var(--sp-s);bottom:var(--sp-s);display:flex;gap:var(--sp-2xs)">
+            <button type="button" onClick="{{ prevImage }}" aria-label="Previous image" style="width:40px;height:40px;background:color-mix(in oklab,var(--chalk) 88%,transparent);border:0;border-radius:var(--radius);cursor:pointer;font-family:var(--ff-display);font-size:var(--fs-body);color:var(--ink)">&#8592;</button>
+            <button type="button" onClick="{{ nextImage }}" aria-label="Next image" style="width:40px;height:40px;background:color-mix(in oklab,var(--chalk) 88%,transparent);border:0;border-radius:var(--radius);cursor:pointer;font-family:var(--ff-display);font-size:var(--fs-body);color:var(--ink)">&#8594;</button>
+          </div>
+        </div>
+        <figcaption style="margin-top:var(--sp-2xs);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;color:var(--steel)">{{ galleryCount }}</figcaption>
+      </figure>
+    </div>
+
+    <!-- ---------------------- RIGHT: DETAILS ---------------------- -->
+    <div style="flex:1 1 min(100%,340px);display:flex;flex-direction:column;gap:var(--sp-m)">
+
+      <nav aria-label="Breadcrumb">
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:var(--sp-2xs);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--steel)">
+          <li><a href="index.html" style="text-decoration:none;color:var(--steel)">Home</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="index.html#categories" style="text-decoration:none;color:var(--steel)">Oak Barrels</a></li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" style="color:var(--ink)">Ultimate Whisky Experience Set</li>
+        </ol>
+      </nav>
+
+      <div>
+        <p style="margin:0 0 var(--sp-xs);display:flex;align-items:center;gap:var(--sp-2xs);font-family:var(--ff-display);font-size:var(--fs-small)">
+          <span aria-hidden="true" style="color:var(--accent-ui);letter-spacing:0.12em">★★★★★</span>
+          <a href="#reviews" style="text-decoration:none;color:color-mix(in oklab,var(--ink) 72%,transparent)" style-hover="text-decoration:underline">4.9 · 428 reviews</a>
+        </p>
+        <p style="margin:0 0 var(--sp-2xs);font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">Personalised · Hand-engraved</p>
+        <h1 style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:20ch">The Ultimate Whisky Experience Set</h1>
+        <p style="margin:var(--sp-2xs) 0 0;font-size:var(--fs-small);color:var(--steel)">Personalised Oak Barrel &amp; Decanter Set</p>
+        <ul style="list-style:none;margin:var(--sp-s) 0 0;padding:0;display:grid;gap:var(--sp-3xs)">
+          <sc-for list="{{ benefits }}" as="benefit" hint-placeholder-count="3">
+            <li style="display:flex;align-items:baseline;gap:var(--sp-xs);font-size:var(--fs-small)">
+              <span aria-hidden="true" style="color:var(--accent-ui);font-family:var(--ff-display)">—</span>
+              <span>{{ benefit }}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+
+      <p style="margin:0;display:flex;align-items:baseline;gap:var(--sp-s);flex-wrap:wrap;padding-bottom:var(--sp-m);border-bottom:var(--rule)">
+        <span style="font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);letter-spacing:var(--ls-display)">$329.00</span>
+        <span style="font-family:var(--ff-display);font-size:var(--fs-small);color:var(--steel);text-decoration:line-through">$429.00</span>
+        <span style="font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in oklab,var(--ink) 60%,transparent)">Save $100.00</span>
+      </p>
+
+      <fieldset style="border:0;margin:0;padding:0">
+        <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--sp-xs);margin-bottom:var(--sp-s)">
+          <legend style="padding:0;font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">Barrel size</legend>
+          <a href="#details" style="font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:1px">Size guide</a>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:var(--sp-2xs)">
+          <sc-for list="{{ sizes }}" as="size" hint-placeholder-count="4">
+            <button type="button" onClick="{{ size.onSelect }}" aria-pressed="{{ size.pressed }}" style="{{ size.style }}">{{ size.label }}</button>
+          </sc-for>
+        </div>
+        <p style="margin:var(--sp-2xs) 0 0;font-size:var(--fs-micro);color:var(--steel)">{{ sizeNote }}</p>
+      </fieldset>
+
+      <!-- SELECT OFFER -->
+      <fieldset style="border:0;margin:0;padding:0">
+        <legend style="padding:0 var(--sp-xs);margin:0 auto;font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);text-align:center">Select offer</legend>
+        <div data-pdp-offers="true" style="display:grid;gap:var(--sp-2xs);grid-template-columns:repeat(3,minmax(0,1fr));margin-top:var(--sp-s)">
+          <sc-for list="{{ offers }}" as="offer" hint-placeholder-count="3">
+            <button type="button" onClick="{{ offer.onSelect }}" aria-pressed="{{ offer.pressed }}" style="{{ offer.style }}">
+              <sc-if value="{{ offer.badge }}" hint-placeholder-val="{{ false }}">
+                <span style="{{ offer.badgeStyle }}">{{ offer.badge }}</span>
+              </sc-if>
+              <span aria-hidden="true" style="{{ offer.dotStyle }}"></span>
+              <span style="display:block;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-small);margin-top:var(--sp-2xs)">{{ offer.name }}</span>
+              <span style="display:block;font-size:var(--fs-micro);font-style:italic;color:var(--steel);margin-top:var(--sp-3xs)">{{ offer.unit }}</span>
+              <span style="display:flex;align-items:baseline;justify-content:center;gap:var(--sp-3xs);margin-top:var(--sp-2xs)">
+                <sc-if value="{{ offer.was }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-family:var(--ff-display);font-size:var(--fs-micro);color:var(--steel);text-decoration:line-through">{{ offer.was }}</span>
+                </sc-if>
+                <span style="font-family:var(--ff-display);font-weight:600;font-size:var(--fs-body)">{{ offer.price }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </fieldset>
+
+      <div style="display:grid;gap:var(--sp-s)">
+        <button type="button" onClick="{{ addToBag }}" style="width:100%;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-body);letter-spacing:0.06em;text-transform:uppercase;background:var(--accent-ui);background-image:var(--sheen);box-shadow:var(--elev);color:var(--chalk);border:1px solid var(--accent-ui);border-radius:var(--radius);padding:var(--sp-m) var(--sp-l);cursor:pointer;transition:filter .2s ease" style-hover="filter:brightness(1.22)">{{ bagLabel }}</button>
+
+        <div style="display:flex;align-items:flex-start;gap:var(--sp-s)">
+          <span aria-hidden="true" style="flex:0 0 auto;width:52px;height:52px;border-radius:50%;background:var(--chalk);border:var(--rule-cut);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-small);color:var(--eucalypt)">30</span>
+          <div>
+            <p style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-small)">30-day engraving guarantee</p>
+            <p style="margin:var(--sp-3xs) 0 0;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 76%,transparent);max-width:46ch">Free proof in 24 hours. Nothing is cut until you approve it, and if the piece is not the proof, we remake it or refund you.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="details" style="border-top:var(--rule);margin-top:var(--sp-2xs);scroll-margin-top:96px">
+        <sc-for list="{{ accordions }}" as="acc" hint-placeholder-count="4">
+          <details style="border-bottom:var(--rule)">
+            <summary style="list-style:none;cursor:pointer;padding:var(--sp-s) 0;display:flex;justify-content:space-between;gap:var(--sp-s);align-items:center;font-family:var(--ff-display);font-weight:500;font-size:var(--fs-small)">
+              <span>{{ acc.title }}</span>
+              <span aria-hidden="true" style="color:var(--steel)">+</span>
+            </summary>
+            <div style="padding:0 0 var(--sp-m)">
+              <p style="margin:0;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 80%,transparent);max-width:52ch">{{ acc.body }}</p>
+              <sc-if value="{{ acc.bullets }}" hint-placeholder-val="{{ false }}">
+                <ul style="margin:var(--sp-s) 0 0;padding-left:var(--sp-s);display:grid;gap:var(--sp-3xs)">
+                  <sc-for list="{{ acc.bullets }}" as="bullet" hint-placeholder-count="6">
+                    <li style="font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 80%,transparent)">{{ bullet }}</li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+            </div>
+          </details>
+        </sc-for>
+      </div>
+
+      <!-- FEATURED REVIEW -->
+      <figure style="margin:0;background:var(--chalk);background-image:var(--sheen);box-shadow:var(--elev);border-radius:var(--radius);padding:var(--sp-m)">
+        <p aria-hidden="true" style="margin:0 0 var(--sp-xs);color:var(--accent-ui);letter-spacing:0.14em;font-family:var(--ff-display)">★★★★★</p>
+        <blockquote style="margin:0;font-size:var(--fs-lead);max-width:44ch">“Gave it to Dad for his 60th. He read the engraving twice, then made everyone else read it.”</blockquote>
+        <figcaption style="margin-top:var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;color:var(--steel)">Megan T. · Verified buyer · Wagga Wagga</figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHY BOOZE &amp; BARRELS ============================ -->
+<section data-screen-label="Why Booze and Barrels" aria-labelledby="why-h" style="position:relative;overflow:hidden;background:var(--cask)">
+  <div aria-hidden="true" style="position:absolute;inset:0">
+    <img src="images/oak-barrels.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%;opacity:0.2">
+  </div>
+  <div style="position:relative;max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter)">
+    <div data-reveal="0" style="text-align:center;margin-bottom:var(--sp-xl)">
+      <p style="margin:0 0 var(--sp-xs);font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 62%,transparent)">Why Booze &amp; Barrels</p>
+      <h2 id="why-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display);color:var(--chalk)">The difference is cut into it</h2>
+    </div>
+
+    <div style="display:grid;gap:var(--sp-m);grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));align-items:start">
+      <div data-reveal="0" style="background:var(--chalk);background-image:var(--sheen);box-shadow:var(--elev);border-radius:var(--radius);padding:var(--sp-l) var(--sp-m)">
+        <p style="margin:0 0 var(--sp-m);text-align:center;font-family:var(--ff-display);font-weight:700;font-size:var(--fs-display-s);letter-spacing:var(--ls-display)">Booze &amp; Barrels</p>
+        <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-s)">
+          <sc-for list="{{ vsUs }}" as="row" hint-placeholder-count="4">
+            <li style="display:flex;align-items:flex-start;gap:var(--sp-s)">
+              <span aria-hidden="true" style="flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--eucalypt);color:var(--chalk);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:var(--fs-micro)">✓</span>
+              <span style="font-size:var(--fs-small);padding-top:3px">{{ row }}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+
+      <div data-reveal="0.08" style="background:color-mix(in oklab,var(--chalk) 82%,transparent);border-radius:var(--radius);padding:var(--sp-l) var(--sp-m);margin-top:clamp(0px,3vw,48px)">
+        <p style="margin:0 0 var(--sp-m);text-align:center;font-family:var(--ff-display);font-weight:700;font-size:var(--fs-display-s);letter-spacing:var(--ls-display);color:color-mix(in oklab,var(--ink) 70%,transparent)">Laser gift shops</p>
+        <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-s)">
+          <sc-for list="{{ vsThem }}" as="row" hint-placeholder-count="4">
+            <li style="display:flex;align-items:flex-start;gap:var(--sp-s)">
+              <span aria-hidden="true" style="flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:color-mix(in oklab,var(--ink) 18%,transparent);color:color-mix(in oklab,var(--ink) 62%,transparent);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:var(--fs-micro)">✕</span>
+              <span style="font-size:var(--fs-small);padding-top:3px;color:color-mix(in oklab,var(--ink) 68%,transparent)">{{ row }}</span>
+            </li>
+          </sc-for>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ WHAT YOU GET (collage) ============================ -->
+<section data-screen-label="What you get" aria-labelledby="get-h" style="border-bottom:var(--rule)">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter);display:grid;gap:var(--sp-xl) var(--sp-2xl);grid-template-columns:repeat(auto-fit,minmax(var(--col-min),1fr));align-items:center">
+
+    <div style="position:relative;padding-bottom:clamp(48px,10vw,120px)">
+      <div data-parallax="true" style="position:relative;aspect-ratio:4/3;background:var(--ph-a);box-shadow:var(--elev);border-radius:var(--radius);overflow:hidden">
+        <img src="images/hero-barrel-set.png" alt="The full set on the bench, engraved and packed" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%">
+      </div>
+      <div data-parallax="true" style="position:absolute;right:0;bottom:0;width:clamp(140px,42%,260px);aspect-ratio:1/1;background:var(--ph-c);box-shadow:var(--elev);border-radius:var(--radius);overflow:hidden;border:6px solid var(--mineral)">
+        <img src="images/decanters.png" alt="Decanter and tumblers, engraving legible through the glass" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      </div>
+    </div>
+
+    <div data-reveal="0">
+      <h2 id="get-h" style="margin:0 0 var(--sp-m);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:26ch">A barrel, a decanter and glasses that get used.</h2>
+      <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-m)">
+        <sc-for list="{{ whyBullets }}" as="row" hint-placeholder-count="3">
+          <li style="display:flex;align-items:flex-start;gap:var(--sp-s)">
+            <span aria-hidden="true" style="flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--accent-ui);color:var(--chalk);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:var(--fs-micro)">✓</span>
+            <span style="font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 82%,transparent);max-width:46ch">{{ row }}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ VERTICAL VIDEO WALL (reused) ============================ -->
+<section data-screen-label="Video wall" aria-labelledby="vid-h" style="background:var(--wall-bg);color:var(--wall-ink)">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) 0 var(--sp-section) var(--gutter)">
+    <div data-reveal="0" style="padding-right:var(--gutter);margin-bottom:var(--sp-l)">
+      <h2 id="vid-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display)">This set, being cut</h2>
+      <p style="margin:var(--sp-2xs) 0 0;font-size:var(--fs-small);color:color-mix(in oklab,var(--wall-ink) 62%,transparent);max-width:44ch">Filmed at the bench on the day each piece was cut. Tap for sound.</p>
+    </div>
+
+    <ul style="list-style:none;margin:0;padding:0 var(--gutter) var(--sp-2xs) 0;display:flex;gap:var(--sp-s);overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
+      <sc-for list="{{ clips }}" as="clip" hint-placeholder-count="4">
+        <li data-reveal="0.05" style="flex:0 0 clamp(200px,42vw,268px);scroll-snap-align:start">
+          <button type="button" data-video-card="true" onClick="{{ clip.onOpen }}" aria-label="{{ clip.aria }}" style="display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;text-align:left">
+            <!-- VERTICAL CLIP 9:16, silent loop, 8–14s — see clip.shot in logic -->
+            <div style="position:relative;aspect-ratio:9/16;background:var(--ph-b);background-image:var(--sheen);box-shadow:var(--elev);overflow:hidden;border-radius:var(--radius)">
+              <div aria-hidden="true" style="{{ clip.posterStyle }}"></div>
+              <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,color-mix(in oklab,var(--cask) 78%,transparent) 0%,transparent 46%)"></span>
+              <span style="position:absolute;left:var(--sp-xs);bottom:var(--sp-xs);right:var(--sp-xs);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ clip.shot }}</span>
+            </div>
+            <p style="margin:var(--sp-2xs) 0 0;font-family:var(--ff-display);font-size:var(--fs-small);color:var(--wall-ink)">{{ clip.title }}</p>
+            <p style="margin:0;font-size:var(--fs-micro);color:color-mix(in oklab,var(--wall-ink) 55%,transparent)">{{ clip.meta }}</p>
+          </button>
+        </li>
+      </sc-for>
+      <li style="flex:0 0 clamp(120px,26vw,168px);scroll-snap-align:start">
+        <a href="index.html#categories" style="display:flex;aspect-ratio:9/16;align-items:end;padding:var(--sp-s);text-decoration:none;color:var(--wall-ink);border:1px solid color-mix(in oklab,var(--wall-ink) 30%,transparent);border-radius:var(--radius)" style-hover="border-color:var(--wall-ink)">
+          <span style="font-family:var(--ff-display);font-size:var(--fs-small)">More from the bench</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <sc-if value="{{ openClip }}" hint-placeholder-val="{{ false }}">
+    <div role="dialog" aria-modal="true" aria-label="Expanded clip" style="position:fixed;inset:0;z-index:80;background:color-mix(in oklab,var(--cask) 92%,transparent);display:flex;align-items:center;justify-content:center;padding:var(--gutter)">
+      <div style="width:min(420px,100%);display:flex;flex-direction:column;gap:var(--sp-s)">
+        <div style="position:relative;aspect-ratio:9/16;background:var(--ph-b);background-image:var(--sheen);box-shadow:var(--elev);border-radius:var(--radius);overflow:hidden;max-height:78vh">
+          <div aria-hidden="true" style="{{ openClip.posterStyle }}"></div>
+          <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,color-mix(in oklab,var(--cask) 78%,transparent) 0%,transparent 50%)"></span>
+          <span style="position:absolute;left:var(--sp-s);bottom:var(--sp-s);right:var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ openClip.shot }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--sp-s);color:var(--chalk)">
+          <span style="font-family:var(--ff-display);font-size:var(--fs-small)">{{ openClip.title }} · Sound on</span>
+          <button type="button" onClick="{{ closeClip }}" style="font-family:var(--ff-display);font-size:var(--fs-small);background:none;border:1px solid color-mix(in oklab,var(--chalk) 40%,transparent);color:var(--chalk);padding:var(--sp-2xs) var(--sp-s);border-radius:var(--radius);cursor:pointer">Close</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</section>
+
+<!-- ============================ FAQ ============================ -->
+<section data-screen-label="FAQ" aria-labelledby="faq-h" style="border-bottom:var(--rule)">
+  <div style="max-width:min(var(--maxw),920px);margin:0 auto;padding:var(--sp-section) var(--gutter)">
+    <h2 id="faq-h" data-reveal="0" style="margin:0 0 var(--sp-xl);text-align:center;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display)">Frequently asked questions</h2>
+    <div style="border-top:var(--rule)">
+      <sc-for list="{{ faqs }}" as="faq" hint-placeholder-count="4">
+        <details style="border-bottom:var(--rule)">
+          <summary style="list-style:none;cursor:pointer;padding:var(--sp-m) 0;display:flex;justify-content:space-between;gap:var(--sp-m);align-items:baseline;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-body)">
+            <span>{{ faq.q }}</span>
+            <span aria-hidden="true" style="color:var(--steel);flex:0 0 auto">+</span>
+          </summary>
+          <div style="padding:0 0 var(--sp-l)">
+            <p style="margin:0;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 80%,transparent);max-width:64ch">{{ faq.a }}</p>
+            <sc-if value="{{ faq.list }}" hint-placeholder-val="{{ false }}">
+              <ul style="margin:var(--sp-s) 0 0;padding:0;list-style:none;display:grid;gap:var(--sp-2xs)">
+                <sc-for list="{{ faq.list }}" as="row" hint-placeholder-count="4">
+                  <li style="display:flex;gap:var(--sp-xs);font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 80%,transparent)">
+                    <span aria-hidden="true" style="color:var(--accent-ui)">✓</span>
+                    <span>{{ row }}</span>
+                  </li>
+                </sc-for>
+              </ul>
+            </sc-if>
+          </div>
+        </details>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ CUSTOMER REVIEWS ============================ -->
+<section id="reviews" data-screen-label="Customer reviews" aria-labelledby="rev-h" style="background:var(--chalk);scroll-margin-top:96px">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter)">
+    <div data-reveal="0" style="text-align:center;display:grid;gap:var(--sp-s);justify-items:center;margin-bottom:var(--sp-xl)">
+      <h2 id="rev-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display)">Customer reviews</h2>
+      <p style="margin:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--sp-xs);font-family:var(--ff-display);font-size:var(--fs-small)">
+        <span aria-hidden="true" style="color:var(--accent-ui);letter-spacing:0.14em">★★★★★</span>
+        <span>4.9 · 428 reviews</span>
+        <span style="font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;color:var(--eucalypt);border:var(--rule-cut);border-radius:var(--radius);padding:2px var(--sp-2xs)">Verified</span>
+      </p>
+      <a href="#reviews" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:var(--accent-ui);color:var(--chalk);border-radius:var(--radius);padding:var(--sp-2xs) var(--sp-m)" style-hover="filter:brightness(1.22)">Write a review</a>
+    </div>
+
+    <ul style="list-style:none;margin:0 0 var(--sp-l);padding:0;display:grid;gap:var(--sp-3xs);grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr))">
+      <sc-for list="{{ reviewStrip }}" as="shot" hint-placeholder-count="6">
+        <li style="position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:var(--radius);background:var(--ph-a)">
+          <div role="img" aria-label="{{ shot.alt }}" style="{{ shot.style }}"></div>
+        </li>
+      </sc-for>
+    </ul>
+
+    <div data-reveal="0" style="background:var(--mineral);border-radius:var(--radius);padding:var(--sp-l) var(--sp-m)">
+      <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-s);letter-spacing:var(--ls-display)">Customers say</h3>
+      <p style="margin:0;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 82%,transparent);max-width:76ch">Buyers call it the gift that gets read aloud, and credit the proof email for catching wrong dates before anything was cut. A few noted the 5 litre size needs more shelf room than expected.</p>
+      <p style="margin:var(--sp-2xs) 0 var(--sp-l);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--steel)">Summary of 428 verified reviews</p>
+
+      <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-small);letter-spacing:0.04em">Review highlights</h3>
+      <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2xs)">
+        <sc-for list="{{ highlights }}" as="row" hint-placeholder-count="3">
+          <li style="display:flex;gap:var(--sp-xs);align-items:baseline;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 84%,transparent);border-bottom:var(--rule);padding-bottom:var(--sp-2xs)">
+            <span aria-hidden="true" style="color:var(--accent-ui);font-family:var(--ff-display)">›</span>
+            <span>{{ row }}</span>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer data-screen-label="Footer" style="background:var(--chalk)">
+  <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter) var(--sp-xl)">
+    <div style="display:grid;gap:var(--sp-xl) var(--sp-l);grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))">
+      <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="3">
+        <div>
+          <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">{{ col.title }}</h2>
+          <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2xs)">
+            <sc-for list="{{ col.items }}" as="row" hint-placeholder-count="4">
+              <li style="font-size:var(--fs-small)"><a href="{{ row.href }}" style="text-decoration:none" style-hover="text-decoration:underline">{{ row.label }}</a></li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-for>
+      <div>
+        <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">Workshop</h2>
+        <address style="font-style:normal;font-size:var(--fs-small);display:grid;gap:var(--sp-2xs)">
+          <span>12 Dacre Street<br>Mitchell ACT 2911<br>Canberra, Australia</span>
+          <a href="tel:1300290238" style="text-decoration:none">1300 290 238</a>
+          <a href="mailto:hello@boozeandbarrels.com.au" style="text-decoration:none">hello@boozeandbarrels.com.au</a>
+          <span style="color:var(--steel)">Mon–Fri, 9am–5pm AEST</span>
+        </address>
+      </div>
+    </div>
+    <div style="margin-top:var(--sp-2xl);padding-top:var(--sp-m);border-top:var(--rule);display:flex;flex-wrap:wrap;gap:var(--sp-s) var(--sp-l);justify-content:space-between;font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--steel)">
+      <span>Booze &amp; Barrels · Australian owned and operated</span>
+      <span>Engraved to order in Canberra</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<div aria-hidden="true" data-img-pool="true" style="display:none;position:absolute;width:0;height:0;overflow:hidden">
+  <img data-key="hero-barrel-set" src="images/hero-barrel-set.png" alt="">
+  <img data-key="oak-barrels" src="images/oak-barrels.png" alt="">
+  <img data-key="decanters" src="images/decanters.png" alt="">
+  <img data-key="glass-sets" src="images/glass-sets.png" alt="">
+  <img data-key="bartender-kits" src="images/bartender-kits.png" alt="">
+</div>
+</x-dc>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#E6E2D9"/><rect x="30" y="30" width="40" height="40" rx="3" fill="#3B3A2E"/><text x="50" y="56" font-family="Helvetica,sans-serif" font-size="16" font-weight="700" fill="#F5F2EC" text-anchor="middle">B&amp;B</text></svg></template>
+<script type="text/x-dc" data-dc-script data-props="{&quot;backgroundTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Mineral&quot;,&quot;Oat&quot;,&quot;Slate&quot;,&quot;Pewter&quot;,&quot;Night&quot;],&quot;default&quot;:&quot;Oat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;fontPairing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Grotesk / Spectral&quot;,&quot;Inscribed / Grotesk&quot;,&quot;Condensed / Newsreader&quot;,&quot;Editorial / Literata&quot;,&quot;Space / Public Sans&quot;],&quot;default&quot;:&quot;Condensed / Newsreader&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;finish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Matte&quot;,&quot;Satin&quot;,&quot;Glossy&quot;],&quot;default&quot;:&quot;Satin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3B3A2E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#3B3A2E&quot;,&quot;#2A4536&quot;,&quot;#1F3A4A&quot;,&quot;#42303A&quot;]},&quot;accentUse&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Engraved surfaces only&quot;,&quot;Engraved, buttons and links&quot;],&quot;default&quot;:&quot;Engraved, buttons and links&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;sectionRhythm&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:56,&quot;min&quot;:56,&quot;max&quot;:160,&quot;step&quot;:8,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;videoWallTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;default&quot;:&quot;Dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sections&quot;}}">
+class Component extends DCLogic {
+  state = { image: 0, offer: 1, size: 2, text: "", bag: false, open: null };
+
+  componentDidMount() {
+    this.applyTokens();
+    const pool = this.imgPool();
+    if (Object.keys(pool).length) this.setState({ pool });
+
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        const v = e.target.querySelector("video");
+        if (!v) return;
+        if (e.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else v.pause();
+      });
+    }, { threshold: 0.6 });
+    this.observe();
+    this.initMotion();
+    this.onKey = (e) => { if (e.key === "Escape") this.setState({ open: null }); };
+    window.addEventListener("keydown", this.onKey);
+  }
+
+  componentDidUpdate() { this.applyTokens(); this.observe(); }
+
+  componentWillUnmount() {
+    if (this.io) this.io.disconnect();
+    if (this.revealIO) this.revealIO.disconnect();
+    if (this.revealFallback) clearTimeout(this.revealFallback);
+    if (this.raf) cancelAnimationFrame(this.raf);
+    window.removeEventListener("keydown", this.onKey);
+  }
+
+  /* Scroll choreography: copy blocks rise into place once, photographs drift
+     slowly inside their frames. Both are skipped under reduced-motion. */
+  initMotion() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Reveals run off IntersectionObserver, not scroll events: the scroll
+    // container varies by host (window, body, or a wrapper), so any
+    // scroll-driven gate silently strands content off screen.
+    const blocks = [...document.querySelectorAll("[data-reveal]")];
+    const show = (el) => {
+      if (el.dataset.revealed) return;
+      el.dataset.revealed = "1";
+      el.style.animation = "bbRise 1.25s cubic-bezier(.16,.72,.24,1) both";
+      el.style.opacity = "1";
+    };
+    const vh0 = window.innerHeight || 800;
+    blocks.forEach((el) => {
+      if (el.getBoundingClientRect().top > vh0 * 0.9) el.style.opacity = "0";
+      else show(el);
+    });
+    this.revealIO = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        show(e.target);
+        this.revealIO.unobserve(e.target);
+      });
+    }, { rootMargin: "0px 0px -10% 0px", threshold: 0.01 });
+    blocks.forEach((el) => { if (!el.dataset.revealed) this.revealIO.observe(el); });
+    // belt and braces: nothing stays hidden if the observer never fires
+    this.revealFallback = setTimeout(() => blocks.forEach(show), 6000);
+
+    // Parallax drifts on a rAF loop gated by visibility — also scroll-agnostic.
+    const frames = [...document.querySelectorAll("[data-parallax]")];
+    frames.forEach((f) => {
+      const layer = f.querySelector("img") || f.firstElementChild;
+      if (layer) layer.style.willChange = "transform";
+    });
+    const drift = () => {
+      const vh = window.innerHeight;
+      frames.forEach((f) => {
+        const rr = f.getBoundingClientRect();
+        if (rr.bottom < -240 || rr.top > vh + 240) return;
+        const layer = f.querySelector("img") || f.firstElementChild;
+        if (!layer) return;
+        const r = f.getBoundingClientRect();
+        const p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / vh));
+        layer.style.transform = "scale(1.18) translate3d(0," + (-p * 6).toFixed(2) + "%,0)";
+      });
+      this.raf = requestAnimationFrame(drift);
+    };
+    this.raf = requestAnimationFrame(drift);
+  }
+
+
+  observe() {
+    if (!this.io) return;
+    requestAnimationFrame(() => {
+      document.querySelectorAll("[data-video-card]").forEach((el) => this.io.observe(el));
+    });
+  }
+
+  applyTokens() {
+    const r = document.documentElement.style;
+    const p = this.props || {};
+
+    // --- background theme: rewrites the five base colours -------------
+    const THEMES = {
+      "Mineral": { mineral: "#DEE2E1", chalk: "#F2F4F3", ink: "#16201D", steel: "#8D9895", cask: "#0E1614" },
+      "Oat":     { mineral: "#E6E2D9", chalk: "#F5F2EC", ink: "#1E1B16", steel: "#9A9386", cask: "#16130E" },
+      "Slate":   { mineral: "#D7DBDE", chalk: "#EFF1F3", ink: "#14191D", steel: "#8A9299", cask: "#0C1114" },
+      "Pewter":  { mineral: "#DCDCDA", chalk: "#F1F1EF", ink: "#1A1A18", steel: "#93938F", cask: "#101010" },
+      "Night":   { mineral: "#141A19", chalk: "#1E2523", ink: "#E8EDEB", steel: "#7E8B88", cask: "#0A0E0D" }
+    };
+    const t = THEMES[p.backgroundTheme] || THEMES["Oat"];
+    r.setProperty("--mineral", t.mineral);
+    r.setProperty("--chalk", t.chalk);
+    r.setProperty("--ink", t.ink);
+    r.setProperty("--steel", t.steel);
+    r.setProperty("--cask", t.cask);
+
+    // --- type pairing: display face / text face -----------------------
+    const FONTS = {
+      "Grotesk / Spectral":    { d: '"Familjen Grotesk"', t: '"Spectral"', tf: "Georgia,serif", q: "Familjen+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400" },
+      "Inscribed / Grotesk":   { d: '"Marcellus"', t: '"Familjen Grotesk"', tf: "Helvetica,sans-serif", q: "Marcellus&family=Familjen+Grotesk:wght@400;500;600;700" },
+      "Condensed / Newsreader":{ d: '"Archivo"', t: '"Newsreader"', tf: "Georgia,serif", q: "Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600" },
+      "Editorial / Literata":  { d: '"Instrument Serif"', t: '"Literata"', tf: "Georgia,serif", q: "Instrument+Serif&family=Literata:opsz,wght@7..72,300;7..72,400;7..72,600" },
+      "Space / Public Sans":   { d: '"Space Grotesk"', t: '"Public Sans"', tf: "Helvetica,sans-serif", q: "Space+Grotesk:wght@400;500;600;700&family=Public+Sans:ital,wght@0,300;0,400;0,600;1,400" }
+    };
+    const f = FONTS[p.fontPairing] || FONTS["Condensed / Newsreader"];
+    let link = document.getElementById("bb-fonts");
+    if (!link) { link = document.createElement("link"); link.id = "bb-fonts"; link.rel = "stylesheet"; document.head.appendChild(link); }
+    const href = "https://fonts.googleapis.com/css2?family=" + f.q + "&display=swap";
+    if (link.getAttribute("href") !== href) link.setAttribute("href", href);
+    r.setProperty("--ff-display", f.d + ',"Helvetica Neue",Helvetica,sans-serif');
+    r.setProperty("--ff-text", f.t + "," + f.tf);
+
+    // --- finish: corner radius, surface sheen, elevation ---------------
+    const fin = p.finish || "Satin";
+    const gloss = fin === "Glossy", satin = fin === "Satin";
+    r.setProperty("--radius", gloss ? "10px" : satin ? "5px" : "2px");
+    r.setProperty("--sheen", gloss
+      ? "linear-gradient(176deg,color-mix(in oklab,var(--chalk) 60%,transparent) 0%,transparent 44%)"
+      : satin
+      ? "linear-gradient(176deg,color-mix(in oklab,var(--chalk) 26%,transparent) 0%,transparent 38%)"
+      : "none");
+    r.setProperty("--elev", gloss
+      ? "0 24px 50px -30px color-mix(in oklab,var(--cask) 75%,transparent)"
+      : satin
+      ? "0 12px 28px -22px color-mix(in oklab,var(--cask) 55%,transparent)"
+      : "none");
+
+    // --- accent -------------------------------------------------------
+    r.setProperty("--eucalypt", p.accentColor || "#3B3A2E");
+    r.setProperty("--accent-ui", p.accentUse === "Engraved surfaces only" ? "var(--ink)" : "var(--eucalypt)");
+
+    if (p.sectionRhythm) r.setProperty("--sp-section", p.sectionRhythm + "px");
+    const lightWall = p.videoWallTheme === "Light";
+    r.setProperty("--wall-bg", lightWall ? "var(--chalk)" : "var(--cask)");
+    r.setProperty("--wall-ink", lightWall ? "var(--ink)" : "var(--chalk)");
+  }
+
+  chip(selected) {
+    return [
+      "font-family:var(--ff-display)",
+      "font-size:var(--fs-small)",
+      "padding:var(--sp-2xs) var(--sp-m)",
+      "border-radius:var(--radius)",
+      "cursor:pointer",
+      "background:" + (selected ? "var(--accent-ui)" : "var(--chalk)"),
+      "background-image:var(--sheen)",
+      "color:" + (selected ? "var(--chalk)" : "var(--ink)"),
+      "border:1px solid " + (selected ? "var(--accent-ui)" : "color-mix(in oklab,var(--ink) 22%,transparent)")
+    ].join(";");
+  }
+
+  tile(selected) {
+    return [
+      "text-align:left",
+      "padding:var(--sp-s)",
+      "border-radius:var(--radius)",
+      "cursor:pointer",
+      "background:var(--chalk)",
+      "background-image:var(--sheen)",
+      "border:1px solid " + (selected ? "var(--accent-ui)" : "color-mix(in oklab,var(--ink) 18%,transparent)"),
+      "box-shadow:" + (selected ? "inset 0 0 0 1px var(--accent-ui)" : "var(--elev)")
+    ].join(";");
+  }
+
+  imgPool() {
+    const out = {};
+    if (typeof document === "undefined") return out;
+    document.querySelectorAll("[data-img-pool] img").forEach((im) => {
+      const s = im.currentSrc || im.getAttribute("src") || "";
+      if (!s) return;
+      const k = im.dataset.key;
+      if (!out[k] || out[k].indexOf("images/") === 0) out[k] = s;
+    });
+    return out;
+  }
+
+  renderVals() {
+    const pool = this.state.pool && Object.keys(this.state.pool).length ? this.state.pool : this.imgPool();
+    const u = (k) => pool[k] || ("images/" + k + ".png");
+    const gallery = [
+      { shot: "Photo — full set, straight on, plain wall", key: "hero-barrel-set", pos: "center 58%" },
+      { shot: "Photo — engraved barrel head, close, raking light", key: "oak-barrels", pos: "center 50%" },
+      { shot: "Photo — decanter and two tumblers, engraving legible", key: "decanters", pos: "center center" },
+      { shot: "Photo — open case, foam bed, pieces in place", key: "bartender-kits", pos: "62% center" },
+      { shot: "Photo — barrel in a room, for scale", key: "hero-barrel-set", pos: "30% 70%" }
+    ];
+    const i = this.state.image;
+
+    const offerOptions = [
+      { name: "One set", unit: "One recipient", price: "$329.00", was: null, badge: null },
+      { name: "Set + 4 glasses", unit: "$97 each", price: "$389.00", was: "$459.00", badge: "Most popular" },
+      { name: "Two sets", unit: "$299 each", price: "$598.00", was: "$658.00", badge: "Best value" }
+    ];
+
+    const sizeOptions = [
+      { label: "2 litre", note: "Ages a bottle in about 2 weeks. Sits on a shelf." },
+      { label: "3 litre", note: "Ages a bottle in about 3 weeks. Most popular for desks." },
+      { label: "5 litre", note: "Ages a bottle in about 4 weeks. The size in these photos." },
+      { label: "10 litre", note: "Ages a bottle in about 8 weeks. Needs a stand." }
+    ];
+
+    const clips = [
+      { title: "5L barrel, three lines", meta: "Retirement gift, Yass", posterStyle: "position:absolute;inset:0;background:url('" + u("oak-barrels") + "') center 45%/cover no-repeat", shot: "Clip — rotary tool cutting the second line", aria: "Play clip: 5 litre barrel, three lines" },
+      { title: "Decanter, first pass", meta: "60th birthday, Sydney", posterStyle: "position:absolute;inset:0;background:url('" + u("decanters") + "') center center/cover no-repeat", shot: "Clip — decanter turning on the jig, glass dust", aria: "Play clip: decanter, first pass" },
+      { title: "Glass set, 40 minutes", meta: "Groomsmen order of nine", posterStyle: "position:absolute;inset:0;background:url('" + u("glass-sets") + "') center 72%/cover no-repeat", shot: "Clip — four tumblers engraved in sequence", aria: "Play clip: glass set, 40 minutes" },
+      { title: "Case packed for a 60th", meta: "Dispatched Tuesday", posterStyle: "position:absolute;inset:0;background:url('" + u("bartender-kits") + "') 62% center/cover no-repeat", shot: "Clip — hands laying pieces into foam, lid closed", aria: "Play clip: case packed for a 60th" }
+    ].map((c, n) => ({ ...c, src: null, onOpen: () => this.setState({ open: n }) }));
+
+    const typed = this.state.text.trim();
+
+    return {
+      activeShot: gallery[i].shot,
+      activeImgStyle: "position:absolute;inset:0;background:color-mix(in oklab,var(--chalk) 58%,var(--mineral)) url('" + u(gallery[i].key) + "') center center/contain no-repeat",
+      galleryCount: "Image " + (i + 1) + " of " + gallery.length,
+      thumbs: gallery.map((g, n) => ({
+        aria: "Show image " + (n + 1) + ": " + g.shot,
+        current: n === i ? "true" : "false",
+        onSelect: () => this.setState({ image: n }),
+        style: "display:block;width:100%;aspect-ratio:1/1;cursor:pointer;padding:0;border-radius:var(--radius);background:color-mix(in oklab,var(--chalk) 58%,var(--mineral)) url('" + u(g.key) + "') center center/contain no-repeat;border:1px solid " + (n === i ? "var(--accent-ui)" : "transparent") + ";opacity:" + (n === i ? "1" : "0.72")
+      })),
+      prevImage: () => this.setState((s) => ({ image: (s.image + gallery.length - 1) % gallery.length })),
+      nextImage: () => this.setState((s) => ({ image: (s.image + 1) % gallery.length })),
+
+      benefits: [
+        "Hand-engraved in Canberra",
+        "Free digital proof within 24 hours",
+        "Barrel, decanter and glasses in one case"
+      ],
+
+      offers: offerOptions.map((o, n) => {
+        const on = n === this.state.offer;
+        return {
+          ...o,
+          pressed: on ? "true" : "false",
+          onSelect: () => this.setState({ offer: n }),
+          style: [
+            "position:relative", "text-align:center", "padding:var(--sp-m) var(--sp-2xs) var(--sp-s)",
+            "border-radius:var(--radius)", "cursor:pointer", "background:var(--chalk)",
+            "background-image:var(--sheen)",
+            "border:1px solid " + (on ? "var(--accent-ui)" : "color-mix(in oklab,var(--ink) 18%,transparent)"),
+            "box-shadow:" + (on ? "inset 0 0 0 1px var(--accent-ui)" : "none")
+          ].join(";"),
+          dotStyle: [
+            "display:block", "width:14px", "height:14px", "margin:0 auto", "border-radius:50%",
+            "border:1px solid " + (on ? "var(--accent-ui)" : "color-mix(in oklab,var(--ink) 34%,transparent)"),
+            "background:" + (on ? "radial-gradient(circle,var(--accent-ui) 0 42%,transparent 44%)" : "transparent")
+          ].join(";"),
+          badgeStyle: [
+            "position:absolute", "left:50%", "top:0", "transform:translate(-50%,-50%)",
+            "white-space:nowrap", "font-family:var(--ff-display)", "font-size:var(--fs-micro)",
+            "letter-spacing:0.08em", "text-transform:uppercase", "padding:2px var(--sp-2xs)",
+            "border-radius:var(--radius)", "color:var(--chalk)",
+            "background:" + (n === 1 ? "var(--eucalypt)" : "color-mix(in oklab,var(--ink) 78%,transparent)")
+          ].join(";")
+        };
+      }),
+
+      vsUs: [
+        "Cut by hand, one piece at a time",
+        "Free proof emailed before anything is cut",
+        "Filled and leak-tested before shipping",
+        "30 days to a remake or refund"
+      ],
+      vsThem: [
+        "Laser-etched from a stock template",
+        "Cut the moment the order lands",
+        "Shipped untested",
+        "Store credit at best"
+      ],
+
+      whyBullets: [
+        "Charred American white oak. Ages a bottle in about four weeks.",
+        "Cut, not printed — rotary on the oak, diamond burr on the crystal.",
+        "Packed in one lined case, so it arrives as a single gift."
+      ],
+
+      faqs: [
+        { q: "Who is this set for?", a: "Anyone marking something worth reading twice.", list: [
+          "Milestone birthdays — a name, a year and a line of your own",
+          "Retirements — the date and the years served",
+          "Groomsmen and bridal parties — a different name on each glass",
+          "Corporate gifts — logo or wordmark, cut from a supplied file"
+        ] },
+        { q: "How long does the engraving take?", a: "About 40 minutes at the bench. Dispatched two to four business days after you approve the proof.", list: null },
+        { q: "Can I change the words after ordering?", a: "Yes. Reply to the proof with a change and we send another, at no charge.", list: null },
+        { q: "How do I look after the barrel?", a: "Fill with water for three days to seal the staves, then pour your spirit. Wipe the engraving dry — never a solvent.", list: null }
+      ],
+
+      reviewStrip: [
+        { alt: "Customer photo — barrel on a kitchen bench", key: "oak-barrels", pos: "center 45%" },
+        { alt: "Customer photo — decanter poured", key: "decanters", pos: "center center" },
+        { alt: "Customer photo — glasses on a table", key: "glass-sets", pos: "center 70%" },
+        { alt: "Customer photo — kit open in its case", key: "bartender-kits", pos: "62% center" },
+        { alt: "Customer photo — full set at home", key: "hero-barrel-set", pos: "center 60%" },
+        { alt: "Customer photo — engraved head, close", key: "oak-barrels", pos: "62% 55%" }
+      ].map((s) => ({ alt: s.alt, style: "position:absolute;inset:0;background:url('" + u(s.key) + "') " + s.pos + "/cover no-repeat" })),
+
+      highlights: [
+        "“The proof caught a wrong date before it was cut.”",
+        "“Arrived in Melbourne four days after I approved it.”",
+        "“Nine glasses, nine names, one delivery.”"
+      ],
+
+      sizes: sizeOptions.map((s, n) => ({
+        label: s.label,
+        pressed: n === this.state.size ? "true" : "false",
+        onSelect: () => this.setState({ size: n }),
+        style: this.chip(n === this.state.size)
+      })),
+      sizeNote: sizeOptions[this.state.size].note,
+
+      onEngravingInput: (e) => this.setState({ text: e.target.value.split("\n").slice(0, 3).join("\n") }),
+      charCount: this.state.text.length + " / 60",
+      engravingPreview: typed || "Your words appear here",
+
+      addToBag: () => this.setState({ bag: true }),
+      bagLabel: this.state.bag
+        ? "In bag — proof emailed within 24 hours"
+        : "Add to bag — " + offerOptions[this.state.offer].price,
+
+      clips,
+      openClip: this.state.open === null ? null : clips[this.state.open],
+      closeClip: () => this.setState({ open: null }),
+
+      nav: [
+        { label: "Oak Barrels", href: "index.html#categories" },
+        { label: "Decanters", href: "index.html#categories" },
+        { label: "Glass Sets", href: "index.html#categories" },
+        { label: "Bartending Kits", href: "index.html#categories" },
+        { label: "How It's Made", href: "index.html#categories" }
+      ],
+
+      accordions: [
+        {
+          title: "Product details",
+          body: "A 5 litre American white oak barrel, a crystal decanter and four tumblers, engraved with your words and packed together in one lined case.",
+          bullets: [
+            "5L barrel, charred American white oak",
+            "700ml lead-free crystal decanter and stopper",
+            "Four 300ml crystal tumblers",
+            "Up to 60 characters over three lines",
+            "Foam-lined wooden case, 46 x 32 x 30cm",
+            "Stainless tap, spare bung and stand included"
+          ]
+        },
+        {
+          title: "Engraving and proof",
+          body: "We email a proof within 24 hours showing your words in position on the piece. Reply with a change or an approval. Nothing is cut before you approve.",
+          bullets: null
+        },
+        {
+          title: "Delivery and returns",
+          body: "Dispatched from Canberra, two to four business days after approval. Free shipping Australia-wide. 30-day guarantee: if the engraving is not the proof you approved, we remake it or refund you.",
+          bullets: null
+        },
+        {
+          title: "Care and refilling",
+          body: "Fill with water for three days to swell the staves before the first pour. Rinse between spirits. Wipe the engraving with a dry cloth, never a solvent.",
+          bullets: null
+        }
+      ],
+
+      footerCols: [
+        { title: "Shop", items: [
+          { label: "Oak Barrels", href: "index.html#categories" },
+          { label: "Decanters", href: "index.html#categories" },
+          { label: "Luxury Glass Sets", href: "index.html#categories" },
+          { label: "Bartending Kits", href: "index.html#categories" }
+        ]},
+        { title: "Ordering", items: [
+          { label: "How it's made", href: "index.html#categories" },
+          { label: "Proofs and approvals", href: "index.html#categories" },
+          { label: "Shipping and delivery", href: "index.html#categories" },
+          { label: "30-day guarantee", href: "index.html#categories" }
+        ]},
+        { title: "Company", items: [
+          { label: "About the workshop", href: "index.html#categories" },
+          { label: "Corporate and bulk orders", href: "index.html#categories" },
+          { label: "Contact", href: "index.html#categories" }
+        ]}
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
