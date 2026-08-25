@@ -9,10 +9,13 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600&display=swap" rel="stylesheet">
+<link rel="preload" href="./assets/fonts/bb-domine.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="./assets/fonts/bb-manrope.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Brand faces, self-hosted (SIL Open Font License). Both are variable
+   fonts, so one file per family covers the whole weight range. */
+@font-face{font-family:'Domine';font-style:normal;font-weight:400 700;font-display:swap;src:url('./assets/fonts/bb-domine.woff2') format('woff2')}
+@font-face{font-family:'Manrope';font-style:normal;font-weight:200 800;font-display:swap;src:url('./assets/fonts/bb-manrope.woff2') format('woff2')}
 /* ============================================================
    BOOZE & BARRELS — DESIGN TOKENS
    Single source of truth. Change a value here and it changes
@@ -21,12 +24,18 @@
    ============================================================ */
 :root{
   /* --- colour ------------------------------------------------ */
-  --ink:#1E1B16;        /* Ironbark  — all type, rules, primary button */
-  --eucalypt:#3B3A2E;   /* Eucalypt  — RESERVED: engraved surfaces only */
-  --steel:#9A9386;      /* Steel     — meta text, captions, image fields */
-  --mineral:#E6E2D9;    /* Mineral   — page ground (unengraved material) */
-  --chalk:#F5F2EC;      /* Chalk     — raised panels */
-  --cask:#16130E;       /* Cask      — video wall band only */
+  /* Brand palette. Five given values carry six roles: navy is both the
+     type colour and the dark band, since the brand sheet shows headings
+     and the band in the same #142340. --steel is the one derived value —
+     the sheet has no mid-tone, so it is mixed down from the navy to keep
+     captions in-family (4.6:1 on --mineral, AA). */
+  --ink:#142340;        /* Navy      — all type, rules, borders */
+  --eucalypt:#735f4f;   /* Taupe     — accent: solid button on dark bands */
+  --charcoal:#2d2d2d;   /* Charcoal  — solid button on light ground */
+  --steel:#667087;      /* Slate     — meta text, captions, image fields */
+  --mineral:#f6f5f2;    /* Off-white — page ground */
+  --chalk:#eee6d9;      /* Cream     — raised panels, and type on navy */
+  --cask:#142340;       /* Navy      — dark band */
 
   /* image placeholder fields, all derived from the palette */
   --ph-a:color-mix(in oklab, var(--steel) 88%, var(--chalk));
@@ -38,8 +47,12 @@
   --wall-ink:var(--chalk);
 
   /* --- type -------------------------------------------------- */
-  --ff-display:"Archivo","Helvetica Neue",Helvetica,sans-serif;
-  --ff-text:"Newsreader",Georgia,serif;
+  /* Domine carries headings only. Manrope carries body copy AND the
+     uppercase micro-labels (eyebrows, buttons, meta) — the brand sheet
+     sets those in the sans, so they get --ff-ui, not --ff-display. */
+  --ff-display:"Domine",Georgia,serif;
+  --ff-text:"Manrope",system-ui,-apple-system,sans-serif;
+  --ff-ui:"Manrope",system-ui,-apple-system,sans-serif;
   --fs-display-xl:clamp(2.1rem,8.4vw,4.9rem);
   --fs-display-l:clamp(1.85rem,5.2vw,3.4rem);
   --fs-display-m:clamp(1.5rem,3.4vw,2.2rem);
@@ -69,6 +82,13 @@
   --rule-cut:1px solid var(--eucalypt);
   --radius:5px;          /* set by the Finish tweak */
   --accent-ui:var(--eucalypt);/* set by the Accent use tweak */
+  /* Buttons. The brand sheet pairs a solid CHARCOAL button with the light
+     ground and a solid TAUPE one with the navy band. Every solid CTA on
+     these pages currently sits on light ground, so it takes --btn-bg;
+     taupe stays --accent-ui (links, focus, rules, accent marks) and is
+     what a solid button inside a navy band would use. */
+  --btn-bg:var(--charcoal);
+  --btn-ink:var(--mineral);
   --sheen:linear-gradient(176deg,color-mix(in oklab,var(--chalk) 26%,transparent) 0%,transparent 38%);
   --elev:0 12px 28px -22px color-mix(in oklab,var(--cask) 55%,transparent);
   --focus:2px solid var(--eucalypt);
@@ -113,16 +133,16 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
   <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-s) var(--gutter);display:flex;align-items:center;gap:var(--sp-m)">
     <a href="index.html" style="text-decoration:none;flex:0 0 auto;display:block;line-height:1">
       <span style="display:block;font-family:var(--ff-display);font-weight:700;font-size:var(--fs-display-s);letter-spacing:var(--ls-display)">Booze &amp; Barrels</span>
-      <span style="display:block;font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);margin-top:var(--sp-3xs)">Engravers · Canberra</span>
+      <span style="display:block;font-family:var(--ff-ui);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);margin-top:var(--sp-3xs)">Engravers · Canberra</span>
     </a>
     <nav aria-label="Primary" style="flex:1 1 auto;min-width:0;overflow-x:auto;display:flex;justify-content:flex-end">
       <ul style="list-style:none;margin:0;padding:0;display:flex;gap:clamp(14px,2.2vw,32px);white-space:nowrap;align-items:center">
         <sc-for list="{{ nav }}" as="item" hint-placeholder-count="5">
-          <li><a href="{{ item.href }}" style="font-family:var(--ff-display);font-size:var(--fs-small);text-decoration:none;letter-spacing:0.01em" style-hover="text-decoration:underline">{{ item.label }}</a></li>
+          <li><a href="{{ item.href }}" style="font-family:var(--ff-ui);font-size:var(--fs-small);text-decoration:none;letter-spacing:0.01em" style-hover="text-decoration:underline">{{ item.label }}</a></li>
         </sc-for>
       </ul>
     </nav>
-    <a href="product-detail.html" style="flex:0 0 auto;font-family:var(--ff-display);font-size:var(--fs-small);text-decoration:none;border-left:var(--rule);padding-left:var(--sp-m)">Bag</a>
+    <a href="product-detail.html" style="flex:0 0 auto;font-family:var(--ff-ui);font-size:var(--fs-small);text-decoration:none;border-left:var(--rule);padding-left:var(--sp-m)">Bag</a>
   </div>
 </header>
 
@@ -143,7 +163,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
     </div>
 
     <div style="background:var(--chalk);background-image:var(--sheen);padding:var(--sp-section) var(--gutter);display:flex;flex-direction:column;justify-content:center;gap:var(--sp-l)">
-      <p style="margin:0;font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">Personalised · Hand-engraved · Canberra</p>
+      <p style="margin:0;font-family:var(--ff-ui);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">Personalised · Hand-engraved · Canberra</p>
 
       <h1 id="hero-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-xl);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:15ch">Their name, cut into the oak by hand.</h1>
 
@@ -152,15 +172,15 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
       <ol style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-s);border-top:var(--rule);padding-top:var(--sp-m)">
         <sc-for list="{{ heroSteps }}" as="step" hint-placeholder-count="3">
           <li style="display:grid;grid-template-columns:auto 1fr;gap:var(--sp-s);align-items:baseline">
-            <span aria-hidden="true" style="font-family:var(--ff-display);font-size:var(--fs-small);color:var(--steel);font-variant-numeric:tabular-nums">{{ step.n }}</span>
-            <span><strong style="font-family:var(--ff-display);font-weight:600;font-size:var(--fs-body)">{{ step.label }}</strong><span style="color:color-mix(in oklab,var(--ink) 72%,transparent)"> — {{ step.detail }}</span></span>
+            <span aria-hidden="true" style="font-family:var(--ff-ui);font-size:var(--fs-small);color:var(--steel);font-variant-numeric:tabular-nums">{{ step.n }}</span>
+            <span><strong style="font-family:var(--ff-ui);font-weight:600;font-size:var(--fs-body)">{{ step.label }}</strong><span style="color:color-mix(in oklab,var(--ink) 72%,transparent)"> — {{ step.detail }}</span></span>
           </li>
         </sc-for>
       </ol>
 
       <div style="display:flex;flex-wrap:wrap;gap:var(--sp-xs)">
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:var(--accent-ui);background-image:var(--sheen);box-shadow:var(--elev);color:var(--chalk);padding:var(--sp-s) var(--sp-l);border:1px solid var(--accent-ui);border-radius:var(--radius);transition:filter .2s ease" style-hover="filter:brightness(1.22)">Personalise &amp; Build</a>
-        <a href="#categories" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:transparent;color:var(--ink);padding:var(--sp-s) var(--sp-l);border:var(--rule-strong);border-radius:var(--radius);transition:background .2s ease" style-hover="background:var(--mineral)">Shop Gifts</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:var(--btn-bg);background-image:var(--sheen);box-shadow:var(--elev);color:var(--btn-ink);padding:var(--sp-s) var(--sp-l);border:1px solid var(--btn-bg);border-radius:var(--radius);transition:filter .2s ease" style-hover="filter:brightness(1.22)">Personalise &amp; Build</a>
+        <a href="#categories" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:transparent;color:var(--ink);padding:var(--sp-s) var(--sp-l);border:var(--rule-strong);border-radius:var(--radius);transition:background .2s ease" style-hover="background:var(--mineral)">Shop Gifts</a>
       </div>
     </div>
   </div>
@@ -172,7 +192,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
 
     <div style="display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:var(--sp-m);border-bottom:var(--rule-strong);padding-bottom:var(--sp-m)">
       <div>
-        <p style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">The catalogue · Four categories</p>
+        <p style="margin:0 0 var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">The catalogue · Four categories</p>
         <h2 id="cat-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:18ch">Four things worth engraving</h2>
       </div>
       <p style="margin:0;font-size:var(--fs-small);color:color-mix(in oklab,var(--ink) 65%,transparent);max-width:34ch">All four take the same engraving, and ship in one box when ordered together.</p>
@@ -188,11 +208,11 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         <p data-cat-folio="true" style="margin:0 0 var(--sp-s);display:flex;align-items:baseline;gap:var(--sp-s);font-family:var(--ff-text);font-weight:300;font-size:clamp(2.2rem,5.5vw,4rem);line-height:0.9;color:var(--steel);letter-spacing:-0.03em"><span>01</span><span aria-hidden="true" style="flex:1 1 auto;height:1px;background:color-mix(in oklab,var(--ink) 18%,transparent)"></span></p>
         <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display)"><a href="product-detail.html" style="text-decoration:none;color:inherit" style-hover="text-decoration:underline">Oak Barrels</a></h3>
         <p style="margin:0 0 var(--sp-m);font-size:var(--fs-lead);max-width:38ch;color:color-mix(in oklab,var(--ink) 82%,transparent)">Charred American white oak, filled and leak-tested before it leaves the bench. The head takes up to three lines of engraving.</p>
-        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
+        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
           <dt style="color:var(--steel)">Sizes</dt><dd style="margin:0">2 · 3 · 5 · 10 litres</dd>
           <dt style="color:var(--steel)">Cut</dt><dd style="margin:0">Rotary, hand-guided</dd>
         </dl>
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $149 — See barrels</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $149 — See barrels</a>
       </div>
     </article>
 
@@ -206,11 +226,11 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         <p data-cat-folio="true" style="margin:0 0 var(--sp-s);display:flex;align-items:baseline;gap:var(--sp-s);font-family:var(--ff-text);font-weight:300;font-size:clamp(2.2rem,5.5vw,4rem);line-height:0.9;color:var(--steel);letter-spacing:-0.03em"><span>02</span><span aria-hidden="true" style="flex:1 1 auto;height:1px;background:color-mix(in oklab,var(--ink) 18%,transparent)"></span></p>
         <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display)"><a href="product-detail.html" style="text-decoration:none;color:inherit" style-hover="text-decoration:underline">Decanters</a></h3>
         <p style="margin:0 0 var(--sp-m);font-size:var(--fs-lead);max-width:38ch;color:color-mix(in oklab,var(--ink) 82%,transparent)">Lead-free crystal, 700ml, with a ground stopper. Engraved on the flat of the shoulder where the light catches it.</p>
-        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
+        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
           <dt style="color:var(--steel)">Capacity</dt><dd style="margin:0">700ml, stoppered</dd>
           <dt style="color:var(--steel)">Cut</dt><dd style="margin:0">Diamond burr on glass</dd>
         </dl>
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $119 — See decanters</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $119 — See decanters</a>
       </div>
     </article>
 
@@ -224,11 +244,11 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         <p data-cat-folio="true" style="margin:0 0 var(--sp-s);display:flex;align-items:baseline;gap:var(--sp-s);font-family:var(--ff-text);font-weight:300;font-size:clamp(2.2rem,5.5vw,4rem);line-height:0.9;color:var(--steel);letter-spacing:-0.03em"><span>03</span><span aria-hidden="true" style="flex:1 1 auto;height:1px;background:color-mix(in oklab,var(--ink) 18%,transparent)"></span></p>
         <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display)"><a href="product-detail.html" style="text-decoration:none;color:inherit" style-hover="text-decoration:underline">Luxury Glass Sets</a></h3>
         <p style="margin:0 0 var(--sp-m);font-size:var(--fs-lead);max-width:38ch;color:color-mix(in oklab,var(--ink) 82%,transparent)">Tumblers and nosing glasses in sets of two to six. Same words on every glass, or a different name on each.</p>
-        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
+        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
           <dt style="color:var(--steel)">Sets</dt><dd style="margin:0">2 · 4 · 6 glasses</dd>
           <dt style="color:var(--steel)">Bench time</dt><dd style="margin:0">40 minutes a set</dd>
         </dl>
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $99 — See glass sets</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $99 — See glass sets</a>
       </div>
     </article>
 
@@ -242,11 +262,11 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         <p data-cat-folio="true" style="margin:0 0 var(--sp-s);display:flex;align-items:baseline;gap:var(--sp-s);font-family:var(--ff-text);font-weight:300;font-size:clamp(2.2rem,5.5vw,4rem);line-height:0.9;color:var(--steel);letter-spacing:-0.03em"><span>04</span><span aria-hidden="true" style="flex:1 1 auto;height:1px;background:color-mix(in oklab,var(--ink) 18%,transparent)"></span></p>
         <h3 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);line-height:var(--lh-tight);letter-spacing:var(--ls-display)"><a href="product-detail.html" style="text-decoration:none;color:inherit" style-hover="text-decoration:underline">Bartending Kits</a></h3>
         <p style="margin:0 0 var(--sp-m);font-size:var(--fs-lead);max-width:38ch;color:color-mix(in oklab,var(--ink) 82%,transparent)">Shaker, jigger, strainer and spoon in a fitted case. The engraving goes on the shaker, or on a plate set into the lid.</p>
-        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
+        <dl style="margin:0 0 var(--sp-m);display:grid;grid-template-columns:auto 1fr;gap:var(--sp-2xs) var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;border-top:var(--rule);padding-top:var(--sp-s)">
           <dt style="color:var(--steel)">In the case</dt><dd style="margin:0">Four tools, lined</dd>
           <dt style="color:var(--steel)">Cut</dt><dd style="margin:0">Steel or brass plate</dd>
         </dl>
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $139 — See kits</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;border-bottom:var(--rule-strong);padding-bottom:2px" style-hover="border-bottom-color:var(--accent-ui)">From $139 — See kits</a>
       </div>
     </article>
 
@@ -256,7 +276,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
 <!-- ============================ 4. THE PROCESS ============================ -->
 <section data-screen-label="Process" aria-labelledby="proc-h" style="border-bottom:var(--rule);background:var(--chalk);background-image:var(--sheen)">
   <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter)">
-    <p style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">In the workshop</p>
+    <p style="margin:0 0 var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">In the workshop</p>
     <h2 id="proc-h" style="margin:0 0 var(--sp-xl);font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:20ch">How an engraving is made</h2>
 
     <div style="display:grid;gap:var(--sp-xl) var(--sp-l);grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))">
@@ -288,14 +308,14 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
     </div>
 
     <div data-reveal="0.08" style="padding:var(--sp-section) var(--gutter);display:flex;flex-direction:column;justify-content:center;gap:var(--sp-m)">
-      <p style="margin:0;font-family:var(--ff-display);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">The one most people choose</p>
+      <p style="margin:0;font-family:var(--ff-ui);font-size:var(--fs-eyebrow);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel)">The one most people choose</p>
       <h2 id="feat-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:16ch">The Ultimate Whisky Experience Set</h2>
       <p style="margin:0;font-size:var(--fs-lead);max-width:44ch;color:color-mix(in oklab,var(--ink) 80%,transparent)">A 5 litre American white oak barrel, a crystal decanter and four tumblers, engraved with the same words and packed in one lined case.</p>
 
       <p style="margin:0;display:flex;align-items:baseline;gap:var(--sp-s);flex-wrap:wrap">
         <span style="font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-m);letter-spacing:var(--ls-display)">$329.00</span>
-        <span style="font-family:var(--ff-display);font-size:var(--fs-small);color:var(--steel);text-decoration:line-through">$429.00</span>
-        <sc-if value="{{ showSaving }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in oklab,var(--ink) 60%,transparent)">Save $100.00</span></sc-if>
+        <span style="font-family:var(--ff-ui);font-size:var(--fs-small);color:var(--steel);text-decoration:line-through">$429.00</span>
+        <sc-if value="{{ showSaving }}" hint-placeholder-val="{{ true }}"><span style="font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.12em;text-transform:uppercase;color:color-mix(in oklab,var(--ink) 60%,transparent)">Save $100.00</span></sc-if>
       </p>
 
       <ul style="list-style:none;margin:0;padding:var(--sp-m) 0 0;border-top:var(--rule);display:grid;gap:var(--sp-2xs)">
@@ -305,7 +325,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
       </ul>
 
       <div style="display:flex;flex-wrap:wrap;gap:var(--sp-xs);margin-top:var(--sp-2xs)">
-        <a href="product-detail.html" style="font-family:var(--ff-display);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:var(--accent-ui);background-image:var(--sheen);box-shadow:var(--elev);color:var(--chalk);padding:var(--sp-s) var(--sp-l);border:1px solid var(--accent-ui);border-radius:var(--radius);transition:filter .2s ease" style-hover="filter:brightness(1.22)">Personalise this set</a>
+        <a href="product-detail.html" style="font-family:var(--ff-ui);font-size:var(--fs-small);letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;background:var(--btn-bg);background-image:var(--sheen);box-shadow:var(--elev);color:var(--btn-ink);padding:var(--sp-s) var(--sp-l);border:1px solid var(--btn-bg);border-radius:var(--radius);transition:filter .2s ease" style-hover="filter:brightness(1.22)">Personalise this set</a>
       </div>
     </div>
   </div>
@@ -329,16 +349,16 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
             <div style="position:relative;aspect-ratio:9/16;background:var(--ph-b);background-image:var(--sheen);box-shadow:var(--elev);overflow:hidden;border-radius:var(--radius)">
               <div aria-hidden="true" style="{{ clip.posterStyle }}"></div>
               <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,color-mix(in oklab,var(--cask) 78%,transparent) 0%,transparent 46%)"></span>
-              <span style="position:absolute;left:var(--sp-xs);bottom:var(--sp-xs);right:var(--sp-xs);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ clip.shot }}</span>
+              <span style="position:absolute;left:var(--sp-xs);bottom:var(--sp-xs);right:var(--sp-xs);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ clip.shot }}</span>
             </div>
-            <p style="margin:var(--sp-2xs) 0 0;font-family:var(--ff-display);font-size:var(--fs-small);color:var(--wall-ink)">{{ clip.title }}</p>
+            <p style="margin:var(--sp-2xs) 0 0;font-family:var(--ff-ui);font-size:var(--fs-small);color:var(--wall-ink)">{{ clip.title }}</p>
             <p style="margin:0;font-size:var(--fs-micro);color:color-mix(in oklab,var(--wall-ink) 55%,transparent)">{{ clip.meta }}</p>
           </button>
         </li>
       </sc-for>
       <li style="flex:0 0 clamp(120px,26vw,168px);scroll-snap-align:start">
         <a href="#categories" style="display:flex;aspect-ratio:9/16;align-items:end;padding:var(--sp-s);text-decoration:none;color:var(--wall-ink);border:1px solid color-mix(in oklab,var(--wall-ink) 30%,transparent);border-radius:var(--radius)" style-hover="border-color:var(--wall-ink)">
-          <span style="font-family:var(--ff-display);font-size:var(--fs-small)">More from the bench</span>
+          <span style="font-family:var(--ff-ui);font-size:var(--fs-small)">More from the bench</span>
         </a>
       </li>
     </ul>
@@ -350,11 +370,11 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         <div style="position:relative;aspect-ratio:9/16;background:var(--ph-b);background-image:var(--sheen);box-shadow:var(--elev);border-radius:var(--radius);overflow:hidden;max-height:78vh">
           <div aria-hidden="true" style="{{ openClip.posterStyle }}"></div>
           <span aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to top,color-mix(in oklab,var(--cask) 78%,transparent) 0%,transparent 50%)"></span>
-          <span style="position:absolute;left:var(--sp-s);bottom:var(--sp-s);right:var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ openClip.shot }}</span>
+          <span style="position:absolute;left:var(--sp-s);bottom:var(--sp-s);right:var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in oklab,var(--chalk) 72%,transparent)">{{ openClip.shot }}</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--sp-s);color:var(--chalk)">
-          <span style="font-family:var(--ff-display);font-size:var(--fs-small)">{{ openClip.title }} · Sound on</span>
-          <button type="button" onClick="{{ closeClip }}" style="font-family:var(--ff-display);font-size:var(--fs-small);background:none;border:1px solid color-mix(in oklab,var(--chalk) 40%,transparent);color:var(--chalk);padding:var(--sp-2xs) var(--sp-s);border-radius:var(--radius);cursor:pointer">Close</button>
+          <span style="font-family:var(--ff-ui);font-size:var(--fs-small)">{{ openClip.title }} · Sound on</span>
+          <button type="button" onClick="{{ closeClip }}" style="font-family:var(--ff-ui);font-size:var(--fs-small);background:none;border:1px solid color-mix(in oklab,var(--chalk) 40%,transparent);color:var(--chalk);padding:var(--sp-2xs) var(--sp-s);border-radius:var(--radius);cursor:pointer">Close</button>
         </div>
       </div>
     </div>
@@ -366,7 +386,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
   <div style="max-width:var(--maxw);margin:0 auto;padding:var(--sp-section) var(--gutter)">
     <div style="display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:var(--sp-m);margin-bottom:var(--sp-xl)">
       <h2 id="rev-h" style="margin:0;font-family:var(--ff-display);font-weight:600;font-size:var(--fs-display-l);line-height:var(--lh-tight);letter-spacing:var(--ls-display);max-width:20ch">Reviews from verified orders</h2>
-      <p style="margin:0;font-family:var(--ff-display);font-size:var(--fs-small);color:var(--steel)">40,000+ customers since we opened the workshop</p>
+      <p style="margin:0;font-family:var(--ff-ui);font-size:var(--fs-small);color:var(--steel)">40,000+ customers since we opened the workshop</p>
     </div>
 
     <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-l);grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))">
@@ -377,7 +397,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
             <div role="img" aria-label="{{ rev.shot }}" style="{{ rev.imgStyle }}"></div>
           </div>
           <blockquote style="margin:0;font-size:var(--fs-body)">{{ rev.quote }}</blockquote>
-          <p style="margin:var(--sp-s) 0 0;font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;color:var(--steel)">{{ rev.who }}</p>
+          <p style="margin:var(--sp-s) 0 0;font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.1em;text-transform:uppercase;color:var(--steel)">{{ rev.who }}</p>
         </li>
       </sc-for>
     </ul>
@@ -406,7 +426,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
     <div style="display:grid;gap:var(--sp-xl) var(--sp-l);grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))">
       <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="3">
         <div>
-          <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">{{ col.title }}</h2>
+          <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">{{ col.title }}</h2>
           <ul style="list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-2xs)">
             <sc-for list="{{ col.items }}" as="row" hint-placeholder-count="4">
               <li style="font-size:var(--fs-small)"><a href="{{ row.href }}" style="text-decoration:none" style-hover="text-decoration:underline">{{ row.label }}</a></li>
@@ -415,7 +435,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
         </div>
       </sc-for>
       <div>
-        <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">Workshop</h2>
+        <h2 style="margin:0 0 var(--sp-s);font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:var(--ls-eyebrow);text-transform:uppercase;color:var(--steel);font-weight:500">Workshop</h2>
         <address style="font-style:normal;font-size:var(--fs-small);display:grid;gap:var(--sp-2xs)">
           <span>12 Dacre Street<br>Mitchell ACT 2911<br>Canberra, Australia</span>
           <a href="tel:1300290238" style="text-decoration:none">1300 290 238</a>
@@ -425,7 +445,7 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
       </div>
     </div>
 
-    <div style="margin-top:var(--sp-2xl);padding-top:var(--sp-m);border-top:var(--rule);display:flex;flex-wrap:wrap;gap:var(--sp-s) var(--sp-l);justify-content:space-between;font-family:var(--ff-display);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--steel)">
+    <div style="margin-top:var(--sp-2xl);padding-top:var(--sp-m);border-top:var(--rule);display:flex;flex-wrap:wrap;gap:var(--sp-s) var(--sp-l);justify-content:space-between;font-family:var(--ff-ui);font-size:var(--fs-micro);letter-spacing:0.08em;text-transform:uppercase;color:var(--steel)">
       <span>Booze &amp; Barrels · Australian owned and operated</span>
       <span>Engraved to order in Canberra</span>
     </div>
@@ -442,8 +462,8 @@ nav[aria-label="Primary"]::-webkit-scrollbar{display:none}
   <img data-key="bartender-kits" src="images/bartender-kits.png" alt="">
 </div>
 </x-dc>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#E6E2D9"/><rect x="30" y="30" width="40" height="40" rx="3" fill="#3B3A2E"/><text x="50" y="56" font-family="Helvetica,sans-serif" font-size="16" font-weight="700" fill="#F5F2EC" text-anchor="middle">B&amp;B</text></svg></template>
-<script type="text/x-dc" data-dc-script data-props="{&quot;backgroundTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Mineral&quot;,&quot;Oat&quot;,&quot;Slate&quot;,&quot;Pewter&quot;,&quot;Night&quot;],&quot;default&quot;:&quot;Oat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;fontPairing&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Grotesk / Spectral&quot;,&quot;Inscribed / Grotesk&quot;,&quot;Condensed / Newsreader&quot;,&quot;Editorial / Literata&quot;,&quot;Space / Public Sans&quot;],&quot;default&quot;:&quot;Condensed / Newsreader&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;finish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Matte&quot;,&quot;Satin&quot;,&quot;Glossy&quot;],&quot;default&quot;:&quot;Satin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3B3A2E&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#3B3A2E&quot;,&quot;#2A4536&quot;,&quot;#1F3A4A&quot;,&quot;#42303A&quot;]},&quot;accentUse&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Engraved surfaces only&quot;,&quot;Engraved, buttons and links&quot;],&quot;default&quot;:&quot;Engraved, buttons and links&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;sectionRhythm&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:56,&quot;min&quot;:56,&quot;max&quot;:160,&quot;step&quot;:8,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;videoWallTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;default&quot;:&quot;Dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sections&quot;},&quot;showSaving&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sections&quot;}}">
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#f6f5f2"/><rect x="30" y="30" width="40" height="40" rx="3" fill="#142340"/><text x="50" y="56" font-family="Helvetica,sans-serif" font-size="16" font-weight="700" fill="#eee6d9" text-anchor="middle">B&amp;B</text></svg></template>
+<script type="text/x-dc" data-dc-script data-props="{&quot;finish&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Matte&quot;,&quot;Satin&quot;,&quot;Glossy&quot;],&quot;default&quot;:&quot;Satin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#735f4f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;,&quot;options&quot;:[&quot;#735f4f&quot;,&quot;#142340&quot;,&quot;#2d2d2d&quot;]},&quot;accentUse&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Engraved surfaces only&quot;,&quot;Engraved, buttons and links&quot;],&quot;default&quot;:&quot;Engraved, buttons and links&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;sectionRhythm&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:56,&quot;min&quot;:56,&quot;max&quot;:160,&quot;step&quot;:8,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;videoWallTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;default&quot;:&quot;Dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sections&quot;},&quot;showSaving&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sections&quot;}}">
 class Component extends DCLogic {
   state = { open: null };
 
@@ -541,36 +561,13 @@ class Component extends DCLogic {
     const r = document.documentElement.style;
     const p = this.props || {};
 
-    // --- background theme: rewrites the five base colours -------------
-    const THEMES = {
-      "Mineral": { mineral: "#DEE2E1", chalk: "#F2F4F3", ink: "#16201D", steel: "#8D9895", cask: "#0E1614" },
-      "Oat":     { mineral: "#E6E2D9", chalk: "#F5F2EC", ink: "#1E1B16", steel: "#9A9386", cask: "#16130E" },
-      "Slate":   { mineral: "#D7DBDE", chalk: "#EFF1F3", ink: "#14191D", steel: "#8A9299", cask: "#0C1114" },
-      "Pewter":  { mineral: "#DCDCDA", chalk: "#F1F1EF", ink: "#1A1A18", steel: "#93938F", cask: "#101010" },
-      "Night":   { mineral: "#141A19", chalk: "#1E2523", ink: "#E8EDEB", steel: "#7E8B88", cask: "#0A0E0D" }
-    };
-    const t = THEMES[p.backgroundTheme] || THEMES["Oat"];
-    r.setProperty("--mineral", t.mineral);
-    r.setProperty("--chalk", t.chalk);
-    r.setProperty("--ink", t.ink);
-    r.setProperty("--steel", t.steel);
-    r.setProperty("--cask", t.cask);
-
-    // --- type pairing: display face / text face -----------------------
-    const FONTS = {
-      "Grotesk / Spectral":    { d: '"Familjen Grotesk"', t: '"Spectral"', tf: "Georgia,serif", q: "Familjen+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400" },
-      "Inscribed / Grotesk":   { d: '"Marcellus"', t: '"Familjen Grotesk"', tf: "Helvetica,sans-serif", q: "Marcellus&family=Familjen+Grotesk:wght@400;500;600;700" },
-      "Condensed / Newsreader":{ d: '"Archivo"', t: '"Newsreader"', tf: "Georgia,serif", q: "Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,600" },
-      "Editorial / Literata":  { d: '"Instrument Serif"', t: '"Literata"', tf: "Georgia,serif", q: "Instrument+Serif&family=Literata:opsz,wght@7..72,300;7..72,400;7..72,600" },
-      "Space / Public Sans":   { d: '"Space Grotesk"', t: '"Public Sans"', tf: "Helvetica,sans-serif", q: "Space+Grotesk:wght@400;500;600;700&family=Public+Sans:ital,wght@0,300;0,400;0,600;1,400" }
-    };
-    const f = FONTS[p.fontPairing] || FONTS["Condensed / Newsreader"];
-    let link = document.getElementById("bb-fonts");
-    if (!link) { link = document.createElement("link"); link.id = "bb-fonts"; link.rel = "stylesheet"; document.head.appendChild(link); }
-    const href = "https://fonts.googleapis.com/css2?family=" + f.q + "&display=swap";
-    if (link.getAttribute("href") !== href) link.setAttribute("href", href);
-    r.setProperty("--ff-display", f.d + ',"Helvetica Neue",Helvetica,sans-serif');
-    r.setProperty("--ff-text", f.t + "," + f.tf);
+    // --- base colours and type are brand-fixed -------------------------
+    // Both used to be swappable (a five-theme palette map and a five-way
+    // font pairing that hot-swapped a Google Fonts <link>). The brand is
+    // now settled, so the values live once in the :root block above and
+    // this method no longer rewrites them — leaving that override in
+    // place would have silently reverted the palette on mount. The fonts
+    // are self-hosted, so there is no stylesheet to inject either.
 
     // --- finish: corner radius, surface sheen, elevation ---------------
     const fin = p.finish || "Satin";
@@ -588,7 +585,7 @@ class Component extends DCLogic {
       : "none");
 
     // --- accent -------------------------------------------------------
-    r.setProperty("--eucalypt", p.accentColor || "#3B3A2E");
+    r.setProperty("--eucalypt", p.accentColor || "#735f4f");
     r.setProperty("--accent-ui", p.accentUse === "Engraved surfaces only" ? "var(--ink)" : "var(--eucalypt)");
 
     if (p.sectionRhythm) r.setProperty("--sp-section", p.sectionRhythm + "px");
